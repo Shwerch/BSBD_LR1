@@ -29,7 +29,7 @@ DELETE FROM audit.login_log;
 -- КЕЙС 5 [Негативный]: Вызов SECURITY DEFINER функции без прав (app_reader)
 SET ROLE app_reader;
 SELECT app.verify_patient_consent('ПДН-12-345678');
--- Ожидание: Ошибка "permission denied for function verify_patient_consent". Права на выполнение (EXECUTE) выданы только app_writer.
+-- Ожидание: Ошибка "permission denied for function verify_patient_consent". Права на выполнение выданы только app_writer.
 
 
 -- КЕЙС 6 [Негативный]: SECURITY DEFINER с невалидными данными (app_writer)
