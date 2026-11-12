@@ -1,0 +1,40 @@
+name: med_records_secure
+
+services:
+  db:
+    build: .
+    image: med_records_secure:17-pgaudit
+    container_name: med_records_secure
+    restart: always
+    environment:
+      POSTGRES_USER: med_security_admin
+      POSTGRES_PASSWORD: med_security_password
+      POSTGRES_DB: med_records_secure
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    command: >
+      postgres
+      -c password_encryption='scram-sha-256'
+      -c log_connections=on
+      -c shared_preload_libraries='pgaudit'
+      -c pgaudit.log='ddl, write, role'
+      -c pgaudit.log_parameter=on
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: med_records_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@med.local
+      PGADMIN_DEFAULT_PASSWORD: admin_password
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
